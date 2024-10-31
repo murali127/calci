@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        .calculator {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .btn-calculator {
+            width: 100%;
+            margin: 5px 0;
+            font-size: 1.5rem;
+        }
+        #result {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+            text-align: right;
+        }
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Simple Calculator</h1>
+        <div class="calculator p-4">
+            <h2 id="result">0</h2>
+            <div class="number-grid mb-4">
+                <button class="btn btn-light btn-calculator" data-value="7">7</button>
+                <button class="btn btn-light btn-calculator" data-value="8">8</button>
+                <button class="btn btn-light btn-calculator" data-value="9">9</button>
+                <button class="btn btn-danger btn-calculator" id="clear">C</button>
+                
+                <button class="btn btn-light btn-calculator" data-value="4">4</button>
+                <button class="btn btn-light btn-calculator" data-value="5">5</button>
+                <button class="btn btn-light btn-calculator" data-value="6">6</button>
+                <button class="btn btn-primary btn-calculator" data-value="add">+</button>
+                
+                <button class="btn btn-light btn-calculator" data-value="1">1</button>
+                <button class="btn btn-light btn-calculator" data-value="2">2</button>
+                <button class="btn btn-light btn-calculator" data-value="3">3</button>
+                <button class="btn btn-primary btn-calculator" data-value="subtract">-</button>
+
+                <button class="btn btn-light btn-calculator" data-value="0">0</button>
+                <button class="btn btn-primary btn-calculator" data-value="multiply">*</button>
+                <button class="btn btn-primary btn-calculator" data-value="divide">/</button>
+                <button class="btn btn-success btn-calculator" id="calculate">=</button>
+            </div>
+            <select class="form-control mb-3" id="operation" hidden>
+                <option value="add">Addition</option>
+                <option value="subtract">Subtraction</option>
+                <option value="multiply">Multiplication</option>
+                <option value="divide">Division</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '';
+        let operator = '';
+        let firstNumber = '';
+
+        // Function to update result display
+        function updateResult() {
+            $('#result').text(currentInput || '0');
+        }
+
+        // Handle number button clicks
+        $('.number-grid button').click(function () {
+            const value = $(this).data('value');
+            if (['add', 'subtract', 'multiply', 'divide'].includes(value)) {
+                if (currentInput) {
+                    if (!firstNumber) {
+                        firstNumber = currentInput; // Store the first number
+                    }
+                    // Update the display with the current input and operator
+                    currentInput += ' ' + operatorSymbol(value) + ' ';
+                    operator = value; // Store the operator
+                }
+            } else {
+                // Append the value to current input
+                currentInput += value;
+            }
+            updateResult();
+        });
+
+        // Handle clear button click
+        $('#clear').click(function () {
+            currentInput = '';
+            firstNumber = '';
+            operator = '';
+            updateResult();
+        });
+
+        // Function to convert operator string to symbol
+        function operatorSymbol(value) {
+            switch (value) {
+                case 'add': return '+';
+                case 'subtract': return '-';
+                case 'multiply': return '*';
+                case 'divide': return '/';
+                default: return '';
+            }
+        }
+
+        // Handle calculate button click
+        $('#calculate').click(function () {
+            if (firstNumber && operator && currentInput) {
+                const secondNumber = parseFloat(currentInput.split(' ').pop()); // Get last number from display
+                let result;
+                switch (operator) {
+                    case 'add':
+                        result = parseFloat(firstNumber) + secondNumber;
+                        break;
+                    case 'subtract':
+                        result = parseFloat(firstNumber) - secondNumber;
+                        break;
+                    case 'multiply':
+                        result = parseFloat(firstNumber) * secondNumber;
+                        break;
+                    case 'divide':
+                        result = parseFloat(firstNumber) / secondNumber;
+                        break;
+                }
+                currentInput = result.toString();
+                firstNumber = '';
+                operator = '';
+                updateResult();
+            }
+        });
+    </script>
+</body>
+</html>
